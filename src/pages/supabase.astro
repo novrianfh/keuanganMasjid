@@ -1,0 +1,40 @@
+---
+import { date } from "astro:schema";
+import Layout from "../layouts/Layout.astro";
+import { supabase } from "../lib/supabaseClient";
+
+// Example: select all rows from a table named 'your_table'
+const { data, error } = await supabase
+  .from("pemasukan")
+  .select("id,tanggal,jumlah,jenis")
+  .order("tanggal", { ascending: false })
+  .limit(5);
+---
+
+<Layout>
+  <div class="container">
+    <section class="section">
+      <div class="card">
+        <div class="card-header">
+          <h1>Last Pemasukan</h1>
+        </div>
+        <div class="card-body">
+          {error && <p style="color:red">Error: {error.message}</p>}
+          {
+            data ? (
+              <ul>
+                {data.map((d) => (
+                  <li>
+                    {d.id} - {d.tanggal} - {d.jenis} - {d.jumlah}{" "}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>Loading...</p>
+            )
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
